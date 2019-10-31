@@ -3,7 +3,7 @@ on isOptionKeyPressed()
 end isOptionKeyPressed
 
 global bornDay
-global kidName
+global title
 global testMode
 local picFolder
 
@@ -41,7 +41,7 @@ on twoDigit(i)
 end twoDigit
 
 on makeFolder(newFolder, baseFolder)
-	display dialog "start makeFolder" & return & newFolder & return & baseFolder
+	#display dialog "start makeFolder" & return & newFolder & return & baseFolder
 	tell application "Finder"
 		if exists (folder (newFolder as string) of (baseFolder as alias)) then
 			#display dialog "ex"
@@ -52,7 +52,7 @@ on makeFolder(newFolder, baseFolder)
 			log ("Making the folder" & POSIX path of baseFolder & "/" & newFolder)
 		end if
 	end tell
-	display dialog "done makeFolder"
+	#display dialog "done makeFolder"
 end makeFolder
 
 on getDestFolder(myFile)
@@ -84,16 +84,16 @@ on getDestFolder(myFile)
 	set endYear to endDate's year
 	set endMonth to twoDigit(endDate's month)
 	set endDay to twoDigit(endDate's day)
-	set res to {startYear, startYear & dateDelim & startMonth & dateDelim & startDay & "-" & endYear & dateDelim & endMonth & dateDelim & endDay & dateDelim & kidName as string}
+	set res to {startYear, startYear & dateDelim & startMonth & dateDelim & startDay & "-" & endYear & dateDelim & endMonth & dateDelim & endDay & "_" & title as string}
 	#display dialog item 2 of res
 	#display notification res
 	return res
 	#log (exists my picFolder & ":" & startYear & ":" & startYear & "_" & myMonth & "_" & my bornDay & "-" & myYear & "_" & myMonth + 1 & "_" & (my bornDay) - 1 as alias)
 end getDestFolder
 
-on runn(_bornDay, _kidName, _picFolder)
+on runn(_bornDay, _title, _picFolder)
 	set bornDay to _bornDay
-	set kidName to _kidName
+	set title to _title
 	set picFolder to _picFolder
 	set testMode to true
 	

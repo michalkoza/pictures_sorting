@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>381</string>
+	<key>AMApplicationVersion</key>
+	<string>2.4</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<key>ActionName</key>
+				<string>Run AppleScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>on isOptionKeyPressed()
+	return (do shell script "/usr/bin/python -c 'import Cocoa; print Cocoa.NSEvent.modifierFlags() &amp; Cocoa.NSAlternateKeyMask &gt; 1'") is "True"
+end isOptionKeyPressed
+
+repeat while isOptionKeyPressed()
+end repeat
+
+set front_app to (path to frontmost application as Unicode text)set wotd_path to "~/Documents/Z_auxiliary/wotd"tell application "Anki" to activate window 1tell application "System Events"	keystroke (ASCII character 31)	keystroke returnend telltry	set file_list to paragraphs of (do shell script "ls " &amp; wotd_path &amp; " | grep eml")on error	set file_list to {}	display notification "Error in ls " &amp; wotd_path &amp; " | grep eml. Probably no files to process."end tryrepeat with this_file in file_list	set fulll to do shell script "iconv -f iso8859-2 -t utf-8 ~/Documents/Z_auxiliary/wotd/" &amp; this_file &amp; " | tr -d '\\r\\n' | tr -s ' '"	log fulll	set en_word to do shell script "iconv -f iso8859-2 -t utf-8 ~/Documents/Z_auxiliary/wotd/" &amp; this_file &amp; " | tr -d '\\r\\n' | tr -s ' ' | sed 's/.*Your word for today is: \\(.*\\)DEFINITION:.*/\\1/'"	log en_word	set def_word to do shell script "iconv -f iso8859-2 -t utf-8 ~/Documents/Z_auxiliary/wotd/" &amp; this_file &amp; " | tr -d '\\r\\n' | tr -s ' ' | sed 's/.*DEFINITION:\\(.*\\) POLISH TRANSLATION:.*/\\1/'"	log def_word	set pl_word to do shell script "iconv -f iso8859-2 -t utf-8 ~/Documents/Z_auxiliary/wotd/" &amp; this_file &amp; " | tr -d '\\r\\n' | tr -s ' ' | sed 's/.*POLISH TRANSLATION: \\(.*\\)EXAMPLE:.*EXAMPLE:.*/\\1/'"	log pl_word	set ex_word to do shell script "iconv -f iso8859-2 -t utf-8 ~/Documents/Z_auxiliary/wotd/" &amp; this_file &amp; " | tr -d '\\r\\n' | tr -s ' ' | sed 's/.*EXAMPLE:\\(.*\\) ------.*EXAMPLE:.*/\\1/'"	log ex_word	set en_ph to do shell script "iconv -f iso8859-2 -t utf-8 ~/Documents/Z_auxiliary/wotd/" &amp; this_file &amp; " | tr -d '\\r\\n' | tr -s ' ' | sed 's/.*PHRASAL VERB OF THE DAY \\(.*\\) - .*EXAMPLE:.*/\\1/'"	log en_ph	set pl_ph to do shell script "iconv -f iso8859-2 -t utf-8 ~/Documents/Z_auxiliary/wotd/" &amp; this_file &amp; " | tr -d '\\r\\n' | tr -s ' ' | sed 's/.*PHRASAL VERB OF THE DAY .* - \\(.*\\)EXAMPLE:.*/\\1/'"	log pl_ph	set ex_ph to do shell script "iconv -f iso8859-2 -t utf-8 ~/Documents/Z_auxiliary/wotd/" &amp; this_file &amp; " | tr -d '\\r\\n' | tr -s ' ' | sed 's/.*PHRASAL VERB OF THE DAY.*EXAMPLE:\\(.*\\)-----------------------------------------.*-----------------------------------------.*/\\1/'"	log ex_ph	tell application "Anki"		activate	end tell		tell application front_app to activate	set userCanceled_word to false	try		set dialogResult to display dialog ¬			"Save:?" &amp; en_word &amp; "" &amp; pl_word buttons {"Cancel", "OK"}	on error number -128		set userCanceled_word to true	end try	if userCanceled_word then	else		tell application "Anki" to activate		tell application "System Events"			display notification "before a haha"			delay 1			keystroke "a"			set frm to the name of frontmost application			display notification "after a" &amp; frm			delay 1		end tell		tell application "Anki" to activate window 1		tell application "System Events"			keystroke pl_word			keystroke return using {shift down}			keystroke def_word			keystroke tab			keystroke en_word			keystroke tab			keystroke ex_word			keystroke return using {command down}			delay 1			key code 53			-- keystroke space		end tell	end if		tell application front_app to activate	set userCanceled_ph to false	try		set dialogResult to display dialog ¬			"Save:?" &amp; en_ph &amp; "" &amp; pl_ph buttons {"Cancel", "OK"}	on error number -128		set userCanceled_ph to true	end try	if userCanceled_ph then	else		tell application "Anki" to activate		tell application "System Events"			display notification "before a"			delay 1			keystroke "a"			display notification "after a"			delay 3		end tell		tell application "Anki" to activate window 1		tell application "System Events"			keystroke pl_ph			keystroke tab			keystroke en_ph			keystroke tab			keystroke ex_ph			keystroke return using {command down}			delay 1			key code 53			-- keystroke space		end tell	end if				do shell script "rm -f ~/Documents/Z_auxiliary/wotd/" &amp; this_fileend repeaton log_window_name(number)	tell application "System Events"		set window_name to name of first window of (first application process whose frontmost is true)		do shell script "echo \"(" &amp; number &amp; ") Active window name = " &amp; window_name &amp; "\" &gt; "	end tellend log_window_name</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunScriptAction</string>
+				<key>InputUUID</key>
+				<string>DA778B8D-68AF-4E90-93FF-AFF7E449193F</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>A4E356B3-3CC1-4830-829E-E5F367E25978</string>
+				<key>UUID</key>
+				<string>220C04E5-F8C6-4369-AF50-5A688135190B</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>on run {input, parameters}
+	
+	(* Your script goes here *)
+	
+	return input
+end run</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<true/>
+				<key>location</key>
+				<string>529.500000:637.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/English.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<true/>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>variables</key>
+	<array>
+		<dict>
+			<key>UUID</key>
+			<string>69A08F12-3422-45D6-8A29-9E32029109F7</string>
+			<key>identifier</key>
+			<string>com.apple.Automator.Variable.Storage</string>
+			<key>name</key>
+			<string>Storage</string>
+		</dict>
+	</array>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.workflow</string>
+	</dict>
+</dict>
+</plist>

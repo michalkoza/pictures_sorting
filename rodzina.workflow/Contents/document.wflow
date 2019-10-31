@@ -51,7 +51,10 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>display notification "Rodzinne"set myScript to load script "Macintosh HD:Users:mkoza:Documents:scripts:pictures_sorting:photo_cleaner.scpt" as aliasset scriptResult to myScript's runn(1, "Rodzinne", "Volumes:mk_green:_MyData:MEDIA:My Pictures")</string>
+					<string>display notification "Rodzinne"
+
+set myScript to load script "Macintosh HD:Users:mkoza:Library:Services:picture_scripts:photo_cleaner.scpt" as alias
+set scriptResult to myScript's runn(1, "Rodzinne", "Volumes:mk_green:_MyData:MEDIA:My Pictures")</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>

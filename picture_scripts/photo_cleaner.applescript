@@ -3,7 +3,7 @@ on isOptionKeyPressed()
 end isOptionKeyPressed
 
 global bornDay
-global kidName
+global title
 global testMode
 local picFolder
 
@@ -41,7 +41,7 @@ on twoDigit(i)
 end twoDigit
 
 on makeFolder(newFolder, baseFolder)
-	display dialog "start makeFolder" & return & newFolder & return & baseFolder
+	#display dialog "start makeFolder" & return & newFolder & return & baseFolder
 	tell application "Finder"
 		if exists (folder (newFolder as string) of (baseFolder as alias)) then
 			#display dialog "ex"
@@ -52,7 +52,7 @@ on makeFolder(newFolder, baseFolder)
 			log ("Making the folder" & POSIX path of baseFolder & "/" & newFolder)
 		end if
 	end tell
-	display dialog "done makeFolder"
+	#display dialog "done makeFolder"
 end makeFolder
 
 on getDestFolder(myFile)
@@ -84,16 +84,19 @@ on getDestFolder(myFile)
 	set endYear to endDate's year
 	set endMonth to twoDigit(endDate's month)
 	set endDay to twoDigit(endDate's day)
-	set res to {startYear, startYear & dateDelim & startMonth & dateDelim & startDay & "-" & endYear & dateDelim & endMonth & dateDelim & endDay & dateDelim & kidName as string}
+	set res to startYear & dateDelim & startMonth & dateDelim & startDay & "-" & endYear & dateDelim & endMonth & dateDelim & endDay
+	if title is not equal to "" then
+		set res to res & "_" & title
+	end if
 	#display dialog item 2 of res
 	#display notification res
-	return res
+	return {startYear, res as string}
 	#log (exists my picFolder & ":" & startYear & ":" & startYear & "_" & myMonth & "_" & my bornDay & "-" & myYear & "_" & myMonth + 1 & "_" & (my bornDay) - 1 as alias)
 end getDestFolder
 
-on runn(_bornDay, _kidName, _picFolder)
+on runn(_bornDay, _title, _picFolder)
 	set bornDay to _bornDay
-	set kidName to _kidName
+	set title to _title
 	set picFolder to _picFolder
 	set testMode to true
 	
@@ -134,3 +137,42 @@ on runn(_bornDay, _kidName, _picFolder)
 		end repeat
 	end tell
 end runn
+
+
+on runn2(_title, _picFolder)
+	set title to _title
+	set picFolder to _picFolder
+	set testMode to true
+	
+	display notification "Checking modifier keys"
+	repeat while isOptionKeyPressed()
+	end repeat
+	display notification "Release modifier keys"
+	
+	tell application "System Events"
+		if not (exists folder picFolder) then
+			display dialog "pic folder not exists" & picFolder
+			error number -128
+		end if
+	end tell
+	
+	tell application "Finder"
+		set theItems to selection
+		#display dialog number of theItems
+		my makeFolder(title, picFolder)
+		set folderPath to picFolder & ":" & title as alias
+		repeat with itemRef in theItems
+			#display dialog name of itemRef as string
+			#log (not (exists folder destFolder of (picFolder as alias)))
+			#log (POSIX path of picFolder)
+			#display dialog yearFolder #& "/" & destFolderName
+			#display dialog destFolderName
+			
+			tell application "System Events" to keystroke (ASCII character 31)
+			move itemRef to folderPath
+			repeat while (exists itemRef)
+				delete itemRef
+			end repeat
+		end repeat
+	end tell
+end runn2

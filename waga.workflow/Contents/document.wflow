@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>509.1</string>
+	<string>492</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -51,10 +51,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>display notification "Daniel"
-
-set myScript to load script "Macintosh HD:Users:mkoza:Library:Services:picture_scripts:photo_cleaner.scpt" as alias
-set scriptResult to myScript's runn(11, "Daniel", "Volumes:mk_green:_MyData:MEDIA:My Pictures")</string>
+					<string>display notification "waga"set myScript to load script "Macintosh HD:Users:mkoza:Library:Services:picture_scripts:photo_cleaner.scpt" as aliasset scriptResult to myScript's runn2("Waga", "Volumes:mk_green:_MyData:MEDIA:My Pictures")</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
